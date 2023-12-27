@@ -25,6 +25,8 @@ public class Botao extends JButton implements MouseListener {
     texto = new JLabel();
     texto.setFont(new Font("Arial", Font.PLAIN, 24));
     texto.setForeground(Color.WHITE);
+    texto.setText("<3");
+    this.add(texto);
   }
 
   // Botão esquerdo = 1 e Botão direito = 3
@@ -38,10 +40,9 @@ public class Botao extends JButton implements MouseListener {
         this.setBackground(Color.RED);
         // acabar o jogo
       } else if (qtdBombas > 0) {
-
-        texto.setText("5");
         this.setBackground(Color.BLUE);
-        this.add(texto);
+        texto.setText("5");
+
       } else if (qtdBombas == 0) {
         // abrir o tabuleiro até encontrar botao com bombas próximas
       }
