@@ -1,8 +1,14 @@
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.function.Function;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 
@@ -56,6 +62,14 @@ public class Botao extends JButton implements MouseListener {
     return this.contemBomba;
   }
 
+  public void tiraImagemDoBotao() {
+    this.setIcon(null);
+  }
+
+  public void adicionaImagemDeBandeira() {
+    this.setIcon(ManipuladorImagens.getImagemBandeira());
+  }
+
   public Botao(Function<Botao, Void> clicouEmBomba, Function<Botao, Void> clicouEmBotaoVazio,
       Function<Boolean, Void> marcouBotao, int x, int y, Runnable botaoAtualizado) {
     this.addMouseListener(this);
@@ -84,25 +98,31 @@ public class Botao extends JButton implements MouseListener {
       click();
       botaoAtualizado.run();
     } else if (e.getButton() == 3 && !this.clicado) {
+
       if (this.marcado) {
         this.marcado = false;
+        this.tiraImagemDoBotao();
         this.setEnabled(true);
-        if (contemBomba) {
-          this.setBackground(Color.PINK);
-        } else {
-          this.setBackground(null);
-        }
       } else {
+        this.adicionaImagemDeBandeira();
         this.marcado = true;
         this.setEnabled(false);
-        this.setBackground(Color.ORANGE);
       }
       botaoAtualizado.run();
       this.marcouBotao.apply(this.marcado);
+
     }
+
   }
 
   public void click() {
+    if (this.marcado) {
+      if (this.contemBomba)
+        this.setBackground(Color.GREEN);
+      if (!this.contemBomba)
+        this.setBackground(Color.RED);
+      return;
+    }
     this.setEnabled(false);
     this.clicado = true;
     if (contemBomba) {
