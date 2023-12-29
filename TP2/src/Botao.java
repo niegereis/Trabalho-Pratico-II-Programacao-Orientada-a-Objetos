@@ -15,6 +15,12 @@ public class Botao extends JButton implements MouseListener {
   private JLabel texto;
   private Function<Botao, Void> clicouEmBomba;
   private Function<Botao, Void> clicouEmBotaoVazio;
+  private Runnable botaoAtualizado;
+  private Function<Boolean, Void> marcouBotao;
+
+  public boolean getMarcado() {
+    return this.marcado;
+  }
 
   public boolean getClicado() {
     return this.clicado;
@@ -50,14 +56,17 @@ public class Botao extends JButton implements MouseListener {
     return this.contemBomba;
   }
 
-  public Botao(Function<Botao, Void> clicouEmBomba, Function<Botao, Void> clicouEmBotaoVazio, int x, int y) {
+  public Botao(Function<Botao, Void> clicouEmBomba, Function<Botao, Void> clicouEmBotaoVazio,
+      Function<Boolean, Void> marcouBotao, int x, int y, Runnable botaoAtualizado) {
     this.addMouseListener(this);
     this.clicouEmBomba = clicouEmBomba;
     this.clicouEmBotaoVazio = clicouEmBotaoVazio;
+    this.marcouBotao = marcouBotao;
+    this.botaoAtualizado = botaoAtualizado;
     this.posX = x;
     this.posY = y;
 
-    texto = new JLabel();
+    texto = new JLabel(" ");
     texto.setFont(new Font("Arial", Font.PLAIN, 20));
     texto.setForeground(Color.BLACK);
     this.add(texto);
@@ -66,7 +75,6 @@ public class Botao extends JButton implements MouseListener {
   // Botão esquerdo = 1 e Botão direito = 3
   @Override
   public void mouseClicked(MouseEvent e) {
-    System.out.println(e.getButton());
     if (e.getButton() == 1 && !this.marcado) {
       if (contemBomba) {
         clicouEmBomba.apply(this);
@@ -74,9 +82,11 @@ public class Botao extends JButton implements MouseListener {
         clicouEmBotaoVazio.apply(this);
       }
       click();
+      botaoAtualizado.run();
     } else if (e.getButton() == 3 && !this.clicado) {
       if (this.marcado) {
         this.marcado = false;
+        this.setEnabled(true);
         if (contemBomba) {
           this.setBackground(Color.PINK);
         } else {
@@ -84,10 +94,11 @@ public class Botao extends JButton implements MouseListener {
         }
       } else {
         this.marcado = true;
+        this.setEnabled(false);
         this.setBackground(Color.ORANGE);
       }
-    } else {
-      System.out.println("Botão não permitido no jogo!");
+      botaoAtualizado.run();
+      this.marcouBotao.apply(this.marcado);
     }
   }
 

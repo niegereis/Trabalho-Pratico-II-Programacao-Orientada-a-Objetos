@@ -1,10 +1,19 @@
 import java.awt.GridLayout;
 import java.util.Random;
-
+import java.util.function.Consumer;
 import javax.swing.JPanel;
 
 public class Tabuleiro extends JPanel {
   private Botao[][] tabuleiro = new Botao[9][9];
+  private int contaMarcacoes = 0;
+
+  private Consumer<Boolean> jogoFinalizou;
+
+  public int getContaMarcacoes() {
+    return this.contaMarcacoes;
+  }
+
+  private Consumer<Integer> atualizacaoDeContadorMarcacado;
 
   private void abrirTabuleiro(Botao b) {
     for (Botao[] linha : tabuleiro) {
@@ -42,17 +51,25 @@ public class Tabuleiro extends JPanel {
     }
   }
 
-  public Tabuleiro() {
+  public Tabuleiro(Consumer<Integer> atualizacaoContadorDeMarcacao, Consumer<Boolean> jogoFinalizou) {
     this.setLayout(new GridLayout(9, 9));
+    this.atualizacaoDeContadorMarcacado = atualizacaoContadorDeMarcacao;
+    this.jogoFinalizou = jogoFinalizou;
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
         tabuleiro[i][j] = new Botao(b -> {
           this.abrirTabuleiro(b);
+          this.jogoFinalizou.accept(false);
           return null;
         }, a -> {
           this.clicouEmBotaoVazio(a);
           return null;
-        }, j, i);
+        }, m -> {
+          this.atualizarContadorMarcacao(m);
+          return null;
+        }, j, i, () -> {
+          this.verificaVitoria();
+        });
         this.add(tabuleiro[i][j]);
       }
     }
@@ -81,5 +98,35 @@ public class Tabuleiro extends JPanel {
         }
       }
     }
+  }
+
+  private void verificaVitoria() {
+    int contaBombas = 0;
+    boolean somenteSemBombasAbertas = true;
+    for (int i = 0; i < 9; i++) {
+      for (int j = 0; j < 9; j++) {
+        if (tabuleiro[i][j].getContemBomba() && tabuleiro[i][j].getMarcado())
+          contaBombas++;
+        else if (tabuleiro[i][j].getMarcado())
+          contaBombas--;
+        if (!(tabuleiro[i][j].getClicado() && !tabuleiro[i][j].getContemBomba()))
+          somenteSemBombasAbertas = false;
+        else if (!tabuleiro[i][j].getClicado() && !tabuleiro[i][j].getContemBomba()) {
+          somenteSemBombasAbertas = false;
+        }
+      }
+    }
+    if (contaBombas == 10 || somenteSemBombasAbertas == true) {
+      abrirTabuleiro(null);
+      this.jogoFinalizou.accept(true);
+    }
+  }
+
+  private void atualizarContadorMarcacao(Boolean m) {
+    if (m)
+      this.contaMarcacoes++;
+    else
+      this.contaMarcacoes--;
+    atualizacaoDeContadorMarcacado.accept(this.contaMarcacoes);
   }
 }
