@@ -18,7 +18,7 @@ public class Tabuleiro extends JPanel {
   private void abrirTabuleiro(Botao b) {
     for (Botao[] linha : tabuleiro) {
       for (Botao botao : linha) {
-        botao.click();
+        botao.exibeBotao();
       }
     }
   }

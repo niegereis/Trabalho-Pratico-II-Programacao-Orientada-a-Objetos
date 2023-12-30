@@ -10,11 +10,15 @@ public class Cabecalho extends JPanel {
   private JLabel labelCarinha;
 
   public void atualizarCarinhaParaFeliz() {
-    labelCarinha.setText("Carinha feliz!");
+    labelCarinha.setIcon(ManipuladorImagens.getImagemCarinhaFeliz());
   }
 
   public void atualizarCarinhaParaTriste() {
-    labelCarinha.setText("Carinha triste!");
+    labelCarinha.setIcon(ManipuladorImagens.getImagemCarinhaTriste());
+  }
+
+  public void atualizarCarinhaParaNormal() {
+    labelCarinha.setIcon(ManipuladorImagens.getImagemCarinhaNormal());
   }
 
   public void atualizaLabelDoContador(int marcacoes) {
@@ -23,10 +27,10 @@ public class Cabecalho extends JPanel {
       this.labelContador.setText("00" + marcacoesStr);
     else if (marcacoes < 100)
       this.labelContador.setText("0" + marcacoesStr);
-
   }
 
   public Cabecalho() {
+    labelCarinha = new JLabel();
     this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
     this.add(Box.createRigidArea(new Dimension(24, 0)));
     labelContador = new JLabel("000");
@@ -34,7 +38,7 @@ public class Cabecalho extends JPanel {
     this.add(labelContador);
     this.setAlignmentX(LEFT_ALIGNMENT);
     this.add(Box.createRigidArea(new Dimension(80, 0)));
-    labelCarinha = new JLabel("Carinha normal!");
+    atualizarCarinhaParaNormal();
     this.add(labelCarinha);
   }
 }

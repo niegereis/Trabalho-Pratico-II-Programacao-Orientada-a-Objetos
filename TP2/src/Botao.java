@@ -62,12 +62,12 @@ public class Botao extends JButton implements MouseListener {
     return this.contemBomba;
   }
 
-  public void tiraImagemDoBotao() {
-    this.setIcon(null);
+  public void removeBandeira() {
+    texto.setIcon(null);
   }
 
   public void adicionaImagemDeBandeira() {
-    this.setIcon(ManipuladorImagens.getImagemBandeira());
+    texto.setIcon(ManipuladorImagens.getImagemBandeira());
   }
 
   public Botao(Function<Botao, Void> clicouEmBomba, Function<Botao, Void> clicouEmBotaoVazio,
@@ -101,7 +101,7 @@ public class Botao extends JButton implements MouseListener {
 
       if (this.marcado) {
         this.marcado = false;
-        this.tiraImagemDoBotao();
+        this.removeBandeira();
         this.setEnabled(true);
       } else {
         this.adicionaImagemDeBandeira();
@@ -115,17 +115,37 @@ public class Botao extends JButton implements MouseListener {
 
   }
 
+  public void exibeBotao() {
+    this.setEnabled(false);
+    if (this.marcado && contemBomba)
+      this.setBackground(Color.GREEN);
+    else if (this.marcado && !contemBomba)
+      this.setBackground(Color.RED);
+    else if (contemBomba) {
+      atualizarBombinha();
+      this.setBackground(Color.RED);
+    } else if (qtdBombas > 0) {
+      this.setBackground(Color.BLUE);
+      texto.setText(String.valueOf(qtdBombas));
+    }
+  }
+
   public void click() {
     if (this.marcado) {
-      if (this.contemBomba)
-        this.setBackground(Color.GREEN);
-      if (!this.contemBomba)
-        this.setBackground(Color.RED);
+      this.marcado = false;
+      this.setEnabled(false);
+      this.clicado = true;
+      this.removeBandeira();
+      // if (this.contemBomba)
+      // this.setBackground(Color.GREEN);
+      // if (!this.contemBomba)
+      // this.setBackground(Color.RED);
       return;
     }
     this.setEnabled(false);
     this.clicado = true;
     if (contemBomba) {
+      atualizarBombinha();
       this.setBackground(Color.RED);
     } else if (qtdBombas > 0) {
       this.setBackground(Color.BLUE);
@@ -148,5 +168,9 @@ public class Botao extends JButton implements MouseListener {
 
   @Override
   public void mouseReleased(MouseEvent e) {
+  }
+
+  public void atualizarBombinha() {
+    texto.setIcon(ManipuladorImagens.getImagemBombinha());
   }
 }
